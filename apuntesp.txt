@@ -1,0 +1,59 @@
+Lo primero que hay que hacer del proyecto es el sistema e carpetas
+- paralelo ha la carpeta public creamos una que se llama app, en esta creamos una que se llama cotrollers, una que se llame models, otra que se llame views y otra que se llama libs. 
+- ahora dentro de public creamos una carpeta css, otra js, otra img(aqui iran las imagenes que no nos importen que sean publicas).
+Despues de crear el sistema de carpetas en la carpeta app creamos un archivo inicio.php y lo llamamos en index.php con 	require_once('../app/inicio.php');
+Ahora en inicio.php llamaremos a otro archivo Application.php que se creara en libs tambien la llamamos asi 	require_once('libs/Application.php'), este archivo tendra una clase Application
+Despues creamos la base de datos con phpmyadmin cuando creamos la base de datos con el usuario root vamos y le damos permisos al usuario homestead para eso vamos a cuentas de usuario->bases de datos seleccionamos la nuestra y le damos a continuar, ahi le damos todos los permisos y procedemos a crear las tablas y sus campos.
+Ahora creamos en libs el archivo MySQLdb.php que contendra la clase MySQLdb contendra:
+<?php
+
+/**
+ * Manejo de la base de datos
+ */
+class MySQLdb 
+{
+	private $host ='mysql';
+	private $user = 'homestead';
+	private $pass = 'secret';
+	private $dbname = 'tienda';
+	
+	private static $instance = null;
+	private $db = null;
+
+	private function __construct()
+	{
+		$options = [
+			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ, 
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING
+		];
+
+		try {
+			$this->db = new PDO(
+				'mysql:host='.$this->host.';dbname='.$this->dbname,
+				$this->user,
+				$this->pass,
+				$options
+			);
+		}catch (PDOException $e){
+			exit('La base de datos está inaccesible');
+		}
+	}
+	
+	public static function getInstance()
+	{
+		if(is_null(self::$instance)){
+			self::$instance = new MySQLdb();
+		}
+		return self::$instance;
+	}
+	
+	public function getDataBase()
+	{
+		return $this->db;
+		
+	}
+}
+
+?>
+
+
