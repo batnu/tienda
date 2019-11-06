@@ -1,0 +1,80 @@
+creamos la carpeta public (donde van los documentos publicos) y la carpeta app(donde van los documentos de la aplicacion y no publicos).
+Dentro de app creamos la carpeta controlers (controladores), libs(librerias), models(modelos), views(vistas).
+Dentro depublic creamos la carpeta css, img(imagenes que no nos importa que se puedan ver), js(javascript).
+Creamos index.php dentro de la carpeta public y hacemos que llame a inicio.php.
+Creamos inicio.php dentro de la carpeta apps y hacemos que llame al fichero Application.php
+Creamos el archivo Application.php dentro de la carpeta app/libs, que sera la clase principal de nuestra aplicacion.
+Entramos en localhost:8080 y entramos en phpmyadmin con el usuario root
+Creamos la base de datos con el nombre de proyecto.
+Configuramos el usuario homestead para que tenga privilegios sobre la base de datos del proyecto.
+Creamos la estructura de la base de datos
+Creamos el fichero MySQLdb.php en la carpeta app/libs, que sera la clase que nos permita manejar la base de datos desde php.
+Modificamos el fichero con el patron singleton para que solo exista una conexion a la base de datos:
+<?php
+/**
+ * Manejo de la base de datos
+ */
+class MySQLdb
+{
+	private $host = 'mysql';
+	private $user = 'homestead';
+	private $pass = 'secret';
+	private $dbname = 'proyectoS';
+
+	//Metodo singleton(Para que solo haya 1 objeto de dicha clase)
+
+	//Creamos la variable para instanciar
+	private static $instance = null;
+	//creamos la variable de base de datos
+	private $db = null;
+
+	//Constructor privado para no poder ser llamado desde fuera de la clase
+	private function __construct()
+	{
+		$options = [
+			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING,
+		];
+
+		try {
+			$this->db = new PDO(
+				'mysql::host=' . $this->host . '; dbname=' . $this->dbname, 
+				$this->user, 
+				$this->pass, 
+				$options
+			);
+
+		} cath (PDOException $e) {
+			exit('La base de datos esta inaccesible');
+		}
+	}
+
+	public static function getInstance() 
+	{
+		//Para acceder a un atributo static de la clase se utiliza self::
+		if (is_null(self::$instance)){
+			self::$instance = new MySQLdb();
+		}
+
+		return self::$instance;
+	}
+
+	public static function getInstance() 
+	{
+		//Para acceder a un atributo static de la clase se utiliza self::
+		if (is_null(self::$instance)){
+			self::$instance = new MySQLdb();
+		}
+
+		return self::$instance;
+	}
+
+	public function getDataBase()
+	{
+		return $this->db;
+	}
+
+}
+?>
+
+Modificamos la clase Application para poder procesar la URL. Empezamos troceando la URL y declaramos los atributos de la clase.
