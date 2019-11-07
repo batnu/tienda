@@ -1,11 +1,12 @@
 <?php include_once (VIEWS . 'header.php') ?>
+<script src="https://cdn.ckeditor.com/ckeditor5/15.0.0/classic/ckeditor.js"></script>
 <script src="<?= ROOT ?>js/admincreateproduct.js"></script>
 <div class="card p-4 bg-light">
 	<div class="card-header">
 		<h1 class="text-center">Alta de un producto</h1>
 	</div>
 	<div class="card-body">
-		<form action="<?= ROOT ?>adminproduct/create" method="POST">
+		<form action="<?= ROOT ?>adminproduct/create" method="POST" enctype="multipart/form-data">
 			<div class="form-group text-left">
 				<label for="type">Tipo de producto:</label>
 				<select name="type" id="type" class="form-control">
@@ -23,7 +24,7 @@
 			</div>
 			<div class="form-group text-left">
 				<label for="description">Descripcion:</label>
-				<input type="text" name="description" class="form-control" required placeholder="Escribe la descripción del producto" value="<?= isset($data['data']['description']) ? $data['data']['description'] : '' ?>">
+				<textarea name="description" id="editor" rows="10"></textarea>
 			</div>
 			<div id="book">
 				<div class="form-group text-left">
@@ -55,21 +56,21 @@
 			</div>
 			<div class="form-group text-left">
 				<label for="price">Precio del producto:</label>
-				<input type="text" name="price" class="form-control" placeholder="Escribe el precio sin comas ni símbolos" value="<?= isset($data['data']['price']) ? $data['data']['price'] : ''?>">
+				<input type="text" name="price" class="form-control" pattern="^(\d\-)?\d*\.?\d*$" placeholder="Escribe el precio sin comas ni símbolos" value="<?= isset($data['data']['price']) ? $data['data']['price'] : ''?>">
 			</div>
 
 			<div class="form-group text-left">
 				<label for="descount">Descuento del producto:</label>
-				<input type="text" name="discount" class="form-control" placeholder="Escribe el descuento del producto sin comas ni símbolos" value="<?= isset($data['data']['discount']) ? $data['data']['discount'] : ''?>">
+				<input type="text" name="discount" class="form-control" pattern="^(\d\-)?\d*\.?\d*$" placeholder="Escribe el descuento del producto sin comas ni símbolos" value="<?= isset($data['data']['discount']) ? $data['data']['discount'] : ''?>">
 			</div>
 
 			<div class="form-group text-left">
 				<label for="send">Coste del envío del producto:</label>
-				<input type="text" name="send" class="form-control" placeholder="Escribe el coste del envío del producto sin comas ni símbolos" value="<?= isset($data['data']['send']) ? $data['data']['send'] : ''?>">
+				<input type="text" name="send" class="form-control" pattern="^(\d\-)?\d*\.?\d*$" placeholder="Escribe el coste del envío del producto sin comas ni símbolos" value="<?= isset($data['data']['send']) ? $data['data']['send'] : ''?>">
 			</div>
 			<div class="form-group text-left">
 				<label for="image">Imágen del producto</label>
-				<input type="file" name="image" class="form-control">
+				<input type="file" name="image" class="form-control" accept="image/jpeg,image/x-png,image/gif">
 			</div>
 			<div class="form-group text-left">
 				<label for="published">Fecha de publicación del producto</label>
@@ -79,35 +80,53 @@
 				<label for="relation1">Producto relacionado:</label>
 				<select name="relation1" id="relation1" class="form-control">
 					<option value="">Selecciona un producto relacionado:</option>
+					<?php foreach($data['catalogue'] as $item): ?>
+						<option value="<?= $item->value ?>">
+							<?= $item->description ?>
+						</option>
+					<?php endforeach ?>
 				</select>
 			</div>
 			<div class="form-group text-left">
 				<label for="relation2">Producto relacionado:</label>
 				<select name="relation2" id="relation2" class="form-control">
 					<option value="">Selecciona un producto relacionado:</option>
+					<?php foreach($data['catalogue'] as $item): ?>
+						<option value="<?= $item->value ?>">
+							<?= $item->description ?>
+						</option>
+					<?php endforeach ?>
 				</select>
 			</div>
 			<div class="form-group text-left">
 				<label for="relation3">Producto relacionado:</label>
 				<select name="relation3" id="relation3" class="form-control">
 					<option value="">Selecciona un producto relacionado:</option>
+					<?php foreach($data['catalogue'] as $item): ?>
+						<option value="<?= $item->value ?>">
+							<?= $item->description ?>
+						</option>
+					<?php endforeach ?>
 				</select>
 			</div>
 			<div class="form-group text-left">
 				<label for="status">Estado del producto</label>
 				<select name="status" id="status" class="form-control">
 					<option value="">Selecciona el estado del producto:</option>
+					<?php foreach($data['status'] as $status): ?>
+						<option value="<?= $status->value ?>">
+							<?= $status->description ?>
+						</option>
+					<?php endforeach ?>
 				</select>
 			</div>
-			<div class="form-group text-left">
-				<label for="mostSold">
-					<input type="checkbox" name="mostSold" id="mostSold">Producto más vendido
-				</label>
+			<div class="form-check text-left">
+				<input type="checkbox" name="mostSold" id="mostSold" class="form-check-input">
+				<label for="mostSold" class="form-check-label">Producto más vendido</label>
 			</div>			
-			<div class="form-group text-left">
-				<label for="new">
-					<input type="checkbox" name="new" id="new">Producto nuevo
-				</label>
+			<div class="form-check text-left">
+				<input type="checkbox" name="new" id="new" class="form-check-input">
+				<label for="new" class="form-check-label">Producto nuevo</label>
 			</div>
 
 			<div class="form-group text-left">
@@ -117,4 +136,11 @@
 		</form>
 	</div>
 </div>
-<?php include_once (VIEWS . 'footer.php') ?> 
+<?php include_once (VIEWS . 'footer.php') ?>
+<script type="text/javascript">
+	ClassicEditor
+		.create(document.querySelector('#editor'))
+		.catch(error => {
+			console.error(error);
+		})
+</script> 
