@@ -51,7 +51,7 @@
 				</div>
 				<div class="form-group text-left">
 					<label for="necesites">Conocimientos previos necesarios:</label>
-					<input type="text" name="people" class="form-control" placeholder="Escribe los conocimientos previos necesarios" value="<?= isset($data['data']['necesites']) ? $data['data']['necesites'] : ''?>">
+					<input type="text" name="necesites" class="form-control" placeholder="Escribe los conocimientos previos necesarios" value="<?= isset($data['data']['necesites']) ? $data['data']['necesites'] : ''?>">
 				</div>
 			</div>
 			<div class="form-group text-left">

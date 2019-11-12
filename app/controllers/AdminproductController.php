@@ -43,11 +43,114 @@ class AdminproductController extends Controller
 			//Recibimps la informacion del formulario
 			//$type = isset($_POST['type']) ? $_POST['type'] : '';
 			//Este es equivalente a la de arriba 
-			$type = isset($_POST['type']) ?? '';
+			$type = $_POST['type'] ?? '';
+			$name = addslashes(htmlentities($_POST['name'] ?? ''));
+			$description = addslashes(htmlentities($_POST['description'] ?? ''));
+			$price = Validate::number($_POST['price'] ?? '');
+			$discount = Validate::number($_POST['discount'] ?? '');
+			$send = Validate::number($_POST['send'] ?? '');
+			$image = Validate::file($_FILES['image']['name']);
+			
+			$published = $_POST['published'] ?? '';
+			$relation1 = $_POST['relation1'] ?? '';
+			$relation2 = $_POST['relation2'] ?? '';
+			$relation3 = $_POST['relation3'] ?? '';
+			$mostSold = isset($_POST['mostSold']) ? '1' : '0';
+			$new = isset($_POST['new']) ? '1' : '0';
+			$status = $_POST['status'] ?? '';
+
+			//BOOKS
+			$author = addslashes(htmlentities($_POST['author'] ?? ''));
+			$publisher = addslashes(htmlentities($_POST['publisher'] ?? ''));
+			$pages = Validate::number($_POST['pages'] ?? '');
+			//COURSES
+			$people = addslashes(htmlentities($_POST['people'] ?? ''));
+			$objetives = addslashes(htmlentities($_POST['objetives'] ?? ''));
+			$necesites = addslashes(htmlentities($_POST['necesites'] ?? ''));
+			
+
 
 			//validamos la informacion 
-			//Creamos el array con los datos
+			if (empty($name)) {
+				array_push($errors, 'El nombre del producto es requerido');
+			}
+			if (empty($description)) {
+				array_push($errors, 'La descripccion del producto es requerida');
+			}
+			if (! is_numeric($price)) {
+				array_push($errors, 'El precio del producto debe ser un número');
+			}
+			if (! is_numeric($discount)) {
+				array_push($errors, 'El descuento del producto debe ser un número');
+			}
 
+			if (is_numeric($price) && is_numeric($discount) && $price < $discount) {
+				array_push($errors, 'El descuento no puede ser mayor que el precio');
+			}
+
+			if (! is_numeric($send)) {
+				array_push($errors, 'Los gastos de envío del producto debe ser un número');
+			}
+
+			if (! Validate::date($published)) {
+				array_push($errors, 'La fecha o su formato no es correcto');
+			} elseif (Validate::dateDif($published)) {
+				array_push($errors, 'La fecha de publicación no puede ser posterior a hoy');
+			}
+
+			if ($type == 1) {
+				if (empty($people)) {
+					array_push($errors, 'El público objetivo del curso es obligatorio');
+				}
+				if (empty($objetives)) {
+					array_push($errors, 'Los objetivos del curso son necesarios');
+				}
+				if (empty($necesites)) {
+					array_push($errors, 'Los requisitos del curso son necesarios');
+				}
+			}elseif ($type == 2) {
+				if (empty($author)) {
+					array_push($errors, 'El autor del libro es necesario');
+				}
+				if (empty($publisher)) {
+					array_push($publisher, 'La editorial del libro es necesaria');
+				}
+				if (! is_numeric($pages)) {
+					$pages = 0;
+					array_push($errors, 'La cantidad de páginas de un libro deben ser un número');
+				}
+
+			}else{
+				array_push($errors, 'Debes seleccionar un tipo válido');
+			}
+
+			$image = strtolower($image);
+			if (is_uploaded_file($_FILES['image']['tmp_name'])) {
+				move_uploaded_file($_FILES['image']['tmp_name'], 'img/'.$image);
+				Validate::resizeImage($image,240);
+			} else{
+				array_push($errors, 'Error al subir el archivo de imagen');
+			}
+			//Creamos el array con los datos
+			$dataForm = [
+				'type' => $type,
+				'name' => $name,
+				'description' => $description,
+				'author' => $author,
+				'publisher' => $publisher,
+				'people' => $people,
+				'objetives' => $objetives,
+				'necesites' => $necesites,
+				'price' => $price,
+				'discount' => $discount,
+				'send' => $send,
+				'pages' => $pages,
+				'published' => $published,
+				'image' => $image,
+				'mostSold' => $mostSold,
+				'new' => $new
+			];
+			var_dump($dataForm);
 			if (empty($errors)) {
 				//enviamos datos al modelo
 				if(empty($errors)){
