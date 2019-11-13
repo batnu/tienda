@@ -1,103 +1,87 @@
 <?php
-
 /**
- * Controlador de administracion de productos
+ * Controlador de administración de Productos
  */
-class AdminproductController extends Controller
+class AdminProductController extends Controller
 {
 	private $model;
 	public function __construct()
 	{
 		$this->model = $this->model('AdminProduct');
 	}
-
 	public function index()
 	{
 		$session = new Session();
-		if($session->getLogin()){
+		if ($session->getLogin()) {
 			$products = $this->model->getProducts();
 			$type = $this->model->getConfig('productType');
 			$data = [
-				'title' => 'Administración de productos',
-				'menu' => false,
-				'admin' => true,
-				'type' => $type,
-				'data' => $products
+				'title'	=> 'Administración de Productos',
+				'menu'	=> false,
+				'admin'	=> true,
+				'type'	=> $type,
+				'data'	=> $products
 			];
-			
-			$this->view('admin/products/index',$data);
-
-		}else{
-			header('location:'. ROOT .'admin');
+			$this->view('admin/products/index', $data);
+		} else {
+			header('location:' . ROOT . 'admin');
 		}
 	}
 	public function create()
 	{
 		$errors = [];
 		$dataForm = [];
-		$type = $this->model->getConfig('productType');
-		$status = $this->model->getConfig('productStatus');
+		$typeConfig = $this->model->getConfig('productType');
+		$statusConfig = $this->model->getConfig('productStatus');
 		$catalogue = $this->model->getCatalogue();
-
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-			//Recibimps la informacion del formulario
-			//$type = isset($_POST['type']) ? $_POST['type'] : '';
-			//Este es equivalente a la de arriba 
+			//Recibimos la información del formulario
 			$type = $_POST['type'] ?? '';
-			$name = addslashes(htmlentities($_POST['name'] ?? ''));
-			$description = addslashes(htmlentities($_POST['description'] ?? ''));
+			$name = Validate::text($_POST['name'] ?? '');
+			$description = Validate::text($_POST['description'] ?? '');
 			$price = Validate::number($_POST['price'] ?? '');
 			$discount = Validate::number($_POST['discount'] ?? '');
 			$send = Validate::number($_POST['send'] ?? '');
 			$image = Validate::file($_FILES['image']['name']);
-			
 			$published = $_POST['published'] ?? '';
-			$relation1 = $_POST['relation1'] ?? '';
-			$relation2 = $_POST['relation2'] ?? '';
-			$relation3 = $_POST['relation3'] ?? '';
+			$relation1 = $_POST['relation1'] ?? 0;
+			$relation2 = $_POST['relation2'] ?? 0;
+			$relation3 = $_POST['relation3'] ?? 0;
 			$mostSold = isset($_POST['mostSold']) ? '1' : '0';
 			$new = isset($_POST['new']) ? '1' : '0';
 			$status = $_POST['status'] ?? '';
-
-			//BOOKS
-			$author = addslashes(htmlentities($_POST['author'] ?? ''));
-			$publisher = addslashes(htmlentities($_POST['publisher'] ?? ''));
+			//books
+			$author = Validate::text($_POST['author'] ?? '');
+			$publisher = Validate::text($_POST['publisher'] ?? '');
 			$pages = Validate::number($_POST['pages'] ?? '');
-			//COURSES
-			$people = addslashes(htmlentities($_POST['people'] ?? ''));
-			$objetives = addslashes(htmlentities($_POST['objetives'] ?? ''));
-			$necesites = addslashes(htmlentities($_POST['necesites'] ?? ''));
-			
-
-
-			//validamos la informacion 
+			//Courses
+			$people = Validate::text($_POST['people'] ?? '');
+			$objetives = Validate::text($_POST['objetives'] ?? '');
+			$necesites = Validate::text($_POST['necesites'] ?? '');
+			//Validamos la información
 			if (empty($name)) {
 				array_push($errors, 'El nombre del producto es requerido');
 			}
 			if (empty($description)) {
-				array_push($errors, 'La descripccion del producto es requerida');
+				array_push($errors, 'La descripción del producto es requerida');
 			}
-			if (! is_numeric($price)) {
-				array_push($errors, 'El precio del producto debe ser un número');
+			if ( ! is_numeric($price)) {
+				array_push($errors, 'El precio del producto debe de ser un número');
 			}
-			if (! is_numeric($discount)) {
-				array_push($errors, 'El descuento del producto debe ser un número');
+			if ( ! is_numeric($discount)) {
+				array_push($errors, 'El descuento del producto debe de ser un número');
 			}
-
+			if (! is_numeric($send)) {
+				array_push($errors, 'Los gastos de envío del producto deben de ser numéricos');
+			}
 			if (is_numeric($price) && is_numeric($discount) && $price < $discount) {
 				array_push($errors, 'El descuento no puede ser mayor que el precio');
 			}
-
-			if (! is_numeric($send)) {
-				array_push($errors, 'Los gastos de envío del producto debe ser un número');
-			}
-
-			if (! Validate::date($published)) {
+			if ( ! Validate::date($published)) {
 				array_push($errors, 'La fecha o su formato no es correcto');
 			} elseif (Validate::dateDif($published)) {
 				array_push($errors, 'La fecha de publicación no puede ser posterior a hoy');
 			}
-
 			if ($type == 1) {
 				if (empty($people)) {
 					array_push($errors, 'El público objetivo del curso es obligatorio');
@@ -108,76 +92,84 @@ class AdminproductController extends Controller
 				if (empty($necesites)) {
 					array_push($errors, 'Los requisitos del curso son necesarios');
 				}
-			}elseif ($type == 2) {
+			} elseif ($type == 2) {
 				if (empty($author)) {
 					array_push($errors, 'El autor del libro es necesario');
 				}
 				if (empty($publisher)) {
-					array_push($publisher, 'La editorial del libro es necesaria');
+					array_push($errors, 'La editorial del libro es necesaria');
 				}
-				if (! is_numeric($pages)) {
+				if ( ! is_numeric($pages)) {
 					$pages = 0;
-					array_push($errors, 'La cantidad de páginas de un libro deben ser un número');
+					array_push($errors, 'La cantidad de páginas de un libro debe de ser un número');
 				}
-
-			}else{
+			} else {
 				array_push($errors, 'Debes seleccionar un tipo válido');
 			}
-
-			$image = strtolower($image);
-			if (is_uploaded_file($_FILES['image']['tmp_name'])) {
-				move_uploaded_file($_FILES['image']['tmp_name'], 'img/'.$image);
-				Validate::resizeImage($image,240);
-			} else{
-				array_push($errors, 'Error al subir el archivo de imagen');
+			if ($image) {
+				if (Validate::imageFile($_FILES['image']['tmp_name'])) {
+					//Comenzamos a tratar la imagen una vez validada
+					$image = strtolower($image);
+					if (is_uploaded_file($_FILES['image']['tmp_name'])) {
+						move_uploaded_file($_FILES['image']['tmp_name'], 'img/' . $image);
+						Validate::resizeImage($image, 240);
+					} else {
+						array_push($errors, 'Error al subir el archivo de imagen');
+					}
+				} else {
+					array_push($errors, 'El formato de imagen no es aceptado');
+				}
+			} else {
+				array_push($errors, 'No he recibido la imagen');
 			}
+			
 			//Creamos el array con los datos
 			$dataForm = [
-				'type' => $type,
-				'name' => $name,
-				'description' => $description,
-				'author' => $author,
-				'publisher' => $publisher,
-				'people' => $people,
-				'objetives' => $objetives,
-				'necesites' => $necesites,
-				'price' => $price,
-				'discount' => $discount,
-				'send' => $send,
-				'pages' => $pages,
-				'published' => $published,
-				'image' => $image,
-				'mostSold' => $mostSold,
-				'new' => $new
+				'type'		=> $type,
+				'name'		=> $name,
+				'description'=> $description,
+				'author'	=> $author,
+				'publisher'	=> $publisher,
+				'people'	=> $people,
+				'objetives'	=> $objetives,
+				'necesites'	=> $necesites,
+				'price'		=> $price,
+				'discount'	=> $discount,
+				'send'		=> $send,
+				'pages'		=> $pages,
+				'published'	=> $published,
+				'image'		=> $image,
+				'mostSold'	=> $mostSold,
+				'new'		=> $new,
+				'relation1' => $relation1,
+				'relation2' => $relation2,
+				'relation3' => $relation3,
+				'status'	=> $status
 			];
-			var_dump($dataForm);
 			if (empty($errors)) {
-				//enviamos datos al modelo
-				if(empty($errors)){
-					//Redirigimos al index de adminproduct
+				if ($this->model->createProduct($dataForm)) {
+					header('location:' . ROOT . 'adminproduct');
 				}
+				array_push($errors, 'Se ha producido algún problema durante la inserción del registro en la BD');
 			}
 		}
-
+		
 		$data = [
-			'title' => 'Administración de productos - Alta',
-			'menu' => false,
-			'admin' => true,
-			'type' => $type,
-			'status' => $status,
+			'title'	=> 'Administración de Productos - Alta',
+			'menu'	=> false,
+			'admin'	=> true,
+			'type'	=> $typeConfig,
+			'status'=> $statusConfig,
 			'catalogue' => $catalogue,
-			'errors' => $errors,
-			'data' => $dataForm
+			'errors'=> $errors,
+			'data'	=> $dataForm
 		];
-		$this->view('admin/products/create',$data);
-
+		$this->view('admin/products/create', $data);
 	}
 	public function update($id)
 	{
-
 	}
 	public function delete($id)
 	{
-
 	}
 }
