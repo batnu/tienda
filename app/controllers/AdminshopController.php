@@ -18,11 +18,11 @@ class AdminshopController extends Controller
 
 		if ($session->getLogin()) {
 			$data = [
-			'title' => 'Administración | Inicio',
-			'subtitle' => 'Administración de la tienda',
-			'admin' => true,
-			'menu' => false
-		];
+				'title' => 'Administración | Inicio',
+				'subtitle' => 'Administración de la tienda',
+				'admin' => true,
+				'menu' => false
+			];
 
 		$this->view('admin/shop/index', $data);
 		} else {
