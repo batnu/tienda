@@ -29,6 +29,13 @@
 				</ul>
 				<ul class="navbar-nav navbar-right">
 					<li class="nav-item">
+						<form action="<?= ROOT ?>search/products" method="POST" class="form-inline">
+							<input type="text" name="search" id="search" class="form-control" size="20" placeholder="¿producto?" required>
+							<input type="submit" class="btn btn-light" value="buscar">
+						</form>
+					</li>
+
+					<li class="nav-item">
 						<a href="<?= ROOT.'shop/logout'?>" class="nav-link">Salir</a>
 					</li>
 				</ul>

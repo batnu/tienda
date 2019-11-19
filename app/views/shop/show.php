@@ -35,6 +35,6 @@
 
 
 <?php endif ?>
-<a href="<?= ROOT . (!empty($data['back'])) ? $data['back'] : 'shop' ?>" class="btn btn-success">Volver al listado de productos</a>
+<a href="<?= ROOT . ((!empty($data['back'])) ? $data['back'] : 'shop') ?>" class="btn btn-success">Volver al listado de productos</a>
 
 <?php include_once(VIEWS . 'footer.php') ?>
