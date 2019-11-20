@@ -6,7 +6,7 @@ class CoursesController extends Controller
 {
 	private $model;
 
-	function __construct()
+	public function __construct()
 	{
 		$this->model = $this->model('Course');
 	}

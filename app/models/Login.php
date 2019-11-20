@@ -6,7 +6,7 @@ class Login
 {
 	private $db;
 	
-	function __construct()
+	public function __construct()
 	{
 		$this->db = MySQLdb::getInstance()->getDatabase();
 	}

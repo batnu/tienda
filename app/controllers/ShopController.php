@@ -6,7 +6,7 @@ class ShopController extends Controller
 {
 	private $model;
 	
-	function __construct()
+	public function __construct()
 	{
 		$this->model = $this->model('Shop');
 	}
@@ -44,13 +44,15 @@ class ShopController extends Controller
 	public function show($id, $back = '')
 	{
 		$product = $this->model->getProductById($id);
+		$session = new Session();
 		$data = [
 			'title' => 'Detalle del producto',
 			'subtitle' => $product->name,
 			'menu' => true,
 			'admin' => false,
 			'data' => $product,
-			'back' => $back
+			'back' => $back,
+			'user_id'  => $session->getUserId()
 		];	
 
 		$this->view('shop/show',$data);

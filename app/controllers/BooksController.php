@@ -6,7 +6,7 @@ class BooksController extends Controller
 {
 	private $model;
 
-	function __construct()
+	public function __construct()
 	{
 		$this->model = $this->model('Book');
 	}	
