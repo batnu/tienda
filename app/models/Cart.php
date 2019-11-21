@@ -45,4 +45,12 @@ class Cart
 		$query2->execute($params);
 		return $query2->rowCount();
 	}
+
+	public function getCart($user_id)
+	{
+		$sql = 'SELECT c.user_id as user, c.product_id as product, c.quantity as quantity, c.send as send, c.discount as discount, p.price as price, p.image as image, p.name as name, p.description as description FROM carts as c, products as p WHERE c.user_id =:user_id AND state = 0 AND c.product_id = p.id';
+		$query = $this->db->prepare($sql);
+		$query->execute([':user_id' => $user_id]);
+		return $query->fetchAll(PDO::FETCH_OBJ);
+	}
 }
