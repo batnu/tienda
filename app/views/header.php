@@ -29,6 +29,11 @@
 					</li>
 				</ul>
 				<ul class="navbar-nav navbar-right">
+					<?php if(isset($_SESSION['cartTotal']) && $_SESSION['cartTotal'] > 0) : ?>
+						<li class="nav-item">
+							<a href="<?= ROOT ?>cart" class="nav-link"><i class="fas fa-shopping-cart"></i> <?= number_format($_SESSION['cartTotal'],2) ?>&euro;</a>
+						</li>
+					<?php endif ?>
 					<li class="nav-item">
 						<form action="<?= ROOT ?>search/products" method="POST" class="form-inline">
 							<input type="text" name="search" id="search" class="form-control" size="20" placeholder="¿Producto?" required>

@@ -53,4 +53,26 @@ class Cart
 		$query->execute([':user_id' => $user_id]);
 		return $query->fetchAll(PDO::FETCH_OBJ);
 	}
+	public function update($user, $product, $quantity)
+	{
+		$sql = 'UPDATE carts SET quantity=:quantity WHERE user_id =:user_id AND product_id=:product_id';
+		$query = $this->db->prepare($sql);
+		$params =[
+			':user_id' => $user,
+			':product_id' => $product,
+			':quantity' => $quantity
+		];
+		return $query->execute($params);
+	}
+
+	public function delete($product, $user)
+	{
+		$sql = 'DELETE FROM carts WHERE user_id=:user_id AND product_id=:product_id';
+		$query = $this->db->prepare($sql);
+		$params =[
+			':user_id' => $user,
+			':product_id' => $product
+		];
+		return $query->execute($params);
+	}
 }

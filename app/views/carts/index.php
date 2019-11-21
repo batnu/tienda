@@ -22,7 +22,7 @@
 				<td class="text-right"><?= number_format($value->price,2)?>&euro;</td>
 				<td class="text-right"><?= number_format($value->quantity * $value->price, 2)?>&euro;</td>
 				<td>&nbsp;</td>
-				<td class="text-right"><a href="" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
+				<td class="text-right"><a href="<?= ROOT ?>cart/delete/<?= $value->product ?>/<?= $value->user ?>" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
 			</tr>
 			<?php $subtotal += $value->price * $value->quantity; $discount += $value->discount; $send += $value->send?>
 		<?php endforeach ?>
@@ -34,7 +34,7 @@
 	<table width="100%" class="text-right">
 		<tr>
 			<td width="80%"></td>
-			<td width="10%">Envio:</td>
+			<td width="10%">Subtotal:</td>
 			<td width="10%"><?= number_format($subtotal,2)?>&euro;</td>
 		</tr>
 		<tr>			
