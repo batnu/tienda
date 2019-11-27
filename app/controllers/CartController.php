@@ -83,7 +83,7 @@ class CartController extends Controller
 				'menu' => true,
 				'data' => $user
 			];
-			$this->view('carts/checkout',$data);
+			$this->view('carts/address',$data);
 		} else {
 			$data = [
 				'title' =>  'Carrito | checkout',
@@ -91,7 +91,6 @@ class CartController extends Controller
 				'menu' => false
 			];
 		}
-		$this->view('carts/checkout', $data);
 	}
 	public function paymentmode()
 	{
@@ -103,21 +102,7 @@ class CartController extends Controller
 		$this->view('carts/paymentmode',$data);
 	}
 
-	public function address()
-	{
-		$session = new Session();
-
-		$user = $session->getUser();
-		
-		$data = [
-			'title' => 'Carrito | Datos de envío',
-			'subtitle'  => 'Carrito - Verificar dirección de envío',
-			'menu' => true,
-			'data' => $user
-		];
-		$this->view('carts/address',$data);
 	
-	}
 
 	public function verify()
 	{
@@ -134,5 +119,69 @@ class CartController extends Controller
 			'menu' => true
 		];
 		$this->view('carts/verify',$data);
+	}
+
+	public function thanks()
+	{
+		$session = new Session();
+		$user = $session->getUser();
+
+		if ($this->model->closeCart($user->id, 1)) {
+			$data = [
+				'title' => 'Carrito | Gracias por su compra',
+				'user' => $user,
+				'menu' => true
+			];
+			$this->view('carts/thanks',$data);
+		} else {
+			$data = [
+				'title'	=> 'Error en la actualización de los productos del carrito',
+				'menu'	=> true,
+				'subtitle' => 'Error en la actualización de los productos del carrito',
+				'text' => 'Hubo un problema al actualizar el carrito por favor intentelo más tarde',
+				'color'	=> 'danger',
+				'url'	=> 'shop',
+				'colorButton' => 'danger',
+				'textButton'  => 'Regresar'
+			];
+		}
+	}
+	public function sales()
+	{
+		$sales = $this->model->sales();
+		$data = [
+			'title' => 'Ventas',
+			'menu' => false,
+			'admin' => true,
+			'data' => $sales
+		];
+		$this->view('admin/carts/index',$data);
+	}
+
+	public function show($date, $id)
+	{
+		$cart = $this->model->show($date, $id);
+
+		$data = [
+			'title'  => 'Detalle de la venta',
+			'menu' => false,
+			'admin' => true,
+			'date'  => $date,
+			'data' => $cart
+		];
+		$this->view('admin/carts/show',$data);
+	}
+
+	public function chartDailySales()
+	{
+		$sales = $this->model->dailySales();
+
+		$data = [
+			'title'  => 'Ventas diarias',
+			'menu' => false,
+			'admin' => true,
+			'data' => $sales
+		];
+		$this->view('admin/carts/dailysales',$data);
 	}
 }

@@ -54,6 +54,7 @@
 					<li class="nav-item">
 						<a href="<?= ROOT ?>adminproduct" class="nav-link">Productos</a>
 					</li>
+					<li class="nav-item"><a href="<?= ROOT ?>cart/sales" class="nav-link">Ventas</a></li>
 				</ul>
 			<?php endif ?>
 		</div>
