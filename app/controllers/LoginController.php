@@ -83,9 +83,10 @@ class LoginController extends Controller
 	}
 	public function registro()
 	{
-		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-			$errors = [];
-			$first_name = isset($_POST['first_name']) ? $_POST['first_name'] : '';
+		$errors = [];
+		$dataForm = [];
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {			
+			$first_name = $_POST['first_name'] ?? '';
 			$last_name_1 = isset($_POST['last_name_1']) ? $_POST['last_name_1'] : '';
 			$last_name_2 = isset($_POST['last_name_2']) ? $_POST['last_name_2'] : '';
 			$email = isset($_POST['email']) ? $_POST['email'] : '';
@@ -144,10 +145,8 @@ class LoginController extends Controller
 			if ( ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
 				array_push($errors, 'El correo electrónico no es válido');
 			}
-			if (count($errors) == 0) {
-				
-				if ($this->model->createUser($dataForm)) {
-					
+			if (count($errors) == 0) {				
+				if ($this->model->createUser($dataForm)) {					
 					$data = [
 						'title'	=> 'Bienvenid@',
 						'subtitle' => 'Bienvenido a la tienda virtual',
@@ -172,27 +171,24 @@ class LoginController extends Controller
 					];
 					$this->view('mensaje',$data);
 				}
-			} else {
-				$data = [
-					'title' => 'Registro',
-					'menu'	=> false,
-					'errors' => $errors,
-					'data'	=> $dataForm
-				];
-				$this->view('register', $data);
 			}
-		} else {
-			$data = [
-				'title'	=> 'Registro',
-				'menu'	=> false
-			];
-			$this->view('register', $data);
 		}
+		$data = [
+			'title' => 'Registro',
+			'menu'	=> false,
+			'errors' => $errors,
+			'data'	=> $dataForm
+		];
+		$this->view('register', $data);
+
+		
 	}
 	public function changePassword($id)
 	{
+		$errors = [];
+
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-			$errors = [];
+			
 			$password1 = isset($_POST['password1']) ? $_POST['password1'] : '';
 			$password2 = isset($_POST['password2']) ? $_POST['password2'] : '';
 			if ($password1 == '') {
@@ -204,16 +200,8 @@ class LoginController extends Controller
 			if ($password1 != $password2) {
 				array_push($errors, 'Ambas contraseñas deben ser iguales');
 			}
-			if (count($errors)) {
-				$data = [
-					'title'	=> 'Cambio de contraseña',
-					'menu'	=> false,
-					'data'	=> $id,
-					'subtitle' => 'Cambio de contraseña de acceso',
-					'errors' => $errors
-				];
-				$this->view('changepassword', $data);
-			} else {
+			if (count($errors) == 0) {			
+
 				if ($this->model->changePassword($id, $password1)) {
 					$data = [
 						'title'	=> 'Modificar contraseña',
@@ -240,15 +228,16 @@ class LoginController extends Controller
 					$this->view('mensaje', $data);
 				}
 			}
-		} else {
-			$data = [
-				'title'	=> 'Cambio de contraseña',
-				'menu'	=> false,
-				'data'	=> $id,
-				'subtitle' => 'Cambio de contraseña de acceso'
-			];
-			$this->view('changepassword', $data);
-		}
+			
+		} 
+		$data = [
+			'title'	=> 'Cambio de contraseña',
+			'menu'	=> false,
+			'data'	=> $id,
+			'subtitle' => 'Cambio de contraseña de acceso'
+		];
+		$this->view('changepassword', $data);
+		
 	}
 	public function verifyUser()
 	{

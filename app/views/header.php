@@ -11,7 +11,11 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-		<a href="<?= ROOT ?>shop" class="navbar-brand">Tienda</a>
+		<?php if(isset($data['admin'])) { ?>
+			<a href="<?= ROOT ?>Adminshop" class="navbar-brand">Tienda</a> 
+		<?php }else{ ?>
+			<a href="<?= ROOT ?>shop" class="navbar-brand">Tienda</a>
+		<?php } ?>
 		<div class="collapse navbar-collapse" id="menu">
 			<?php if ($data['menu']): ?>
 				<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -56,7 +60,11 @@
 					</li>
 					<li class="nav-item"><a href="<?= ROOT ?>cart/sales" class="nav-link">Ventas</a></li>
 				</ul>
+				<ul>
+					<a href="<?= ROOT . 'admin/logeout' ?>" class="nav nav-link">Salir</a>
+				</ul>
 			<?php endif ?>
+			<?php //TODO Añadir logeout al administrador  ?>
 		</div>
 	</nav>
 	

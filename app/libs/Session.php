@@ -6,7 +6,9 @@
 class Session
 {
 	private $login = false;
+	private $loginAdmin = false;
 	private $user;
+	private $admin;
 	private $cartTotal;
 
 	function __construct()
@@ -19,11 +21,22 @@ class Session
 				$_SESSION['cartTotal'] = $this->cartTotal();
 				$this->cartTotal = $_SESSION['cartTotal'];
 			}
-			
+		}elseif (isset($_SESSION['admin'])) {
+			$this->admin = $_SESSION['admin'];
+			$this->loginAdmin = true;
 		} else {
 			unset($this->user);
 			$this->login = false;
+			unset($this->admin);
+			$this->loginAdmin = false;
 		}
+	}
+
+	public function loginAdmin($admin)
+	{
+		$this->admin = $admin;
+		$_SESSION['admin'] = true;
+		$this->loginAdmin = true;
 	}
 
 	public function login($user) 
@@ -40,6 +53,18 @@ class Session
 		session_destroy();
 		$this->login = false;
 	}
+	public function logoutAdmin()
+	{
+		unset($_SESSION['admin']);
+		unset($this->admin);
+		session_destroy();
+		$this->loginAdmin = false;
+	}
+
+	public function getLoginAdmin()
+	{
+		return $this->loginAdmin;
+	}
 
 	public function getLogin()
 	{
@@ -50,9 +75,17 @@ class Session
 	{
 		return $this->user;
 	}
+	public function getAdmin()
+	{
+		return $this->admin;
+	}
 	public function getUserId()
 	{
 		return $this->user->id;
+	}
+	public function getAdminId()
+	{
+		return $this->admin->id;
 	}
 	private function cartTotal()
 	{

@@ -15,15 +15,13 @@ class AdminshopController extends Controller
 	public function index() 
 	{
 		$session = new Session();
-
-		if ($session->getLogin()) {
+		if ($session->getLoginAdmin()) {
 			$data = [
 				'title' => 'Administración | Inicio',
 				'subtitle' => 'Administración de la tienda',
 				'admin' => true,
 				'menu' => false
 			];
-
 		$this->view('admin/shop/index', $data);
 		} else {
 			header('location:' . ROOT . 'admin');

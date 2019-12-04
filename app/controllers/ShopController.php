@@ -58,6 +58,24 @@ class ShopController extends Controller
 		$this->view('shop/show',$data);
 
 	}
+
+	public function createComent()
+	{
+		$errors = [];
+		$dataForm = [];
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {			
+			$coment = $_POST['coment'] ?? '';
+			$dataForm = [
+				'coment' => $coment
+			];
+		}
+		if ($this->model->createComent($dataForm)) {
+			header('location:' . ROOT . 'shop');
+		}
+		array_push($errors, 'Se ha producido algún problema durante la inserción del comentario en la BD');
+
+	}
+
 	public function whoami()
 	{
 		$session = new Session();

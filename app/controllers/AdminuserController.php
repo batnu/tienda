@@ -13,7 +13,7 @@ class AdminUserController extends Controller
 	public function index()
 	{
 		$session = new Session();
-		if ($session->getLogin()) {
+		if ($session->getLoginAdmin()) {
 			$users = $this->model->getUsers();
 			$data = [
 				'title'	=> 'Administración de Usuarios',

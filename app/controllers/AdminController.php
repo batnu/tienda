@@ -47,7 +47,7 @@ class AdminController extends Controller
 				if (count($errors) == 0) {
 					$session = new Session();
 
-					$session->login($dataForm);
+					$session->loginAdmin($dataForm);
 
 					header('location:' . ROOT . 'Adminshop');
 				}
@@ -61,6 +61,12 @@ class AdminController extends Controller
 			'errors'=> $errors
 		];
 		$this->view('admin/index2', $data);
+	}
+	public function logeout()
+	{
+		$session = new Session();
+		$session->logoutAdmin();
+		header('location:'.ROOT.'admin');
 	}
 }
 

@@ -48,4 +48,8 @@ class Shop
 		return mail('info@shopmvc.local', $subject, $msg, $headers);
 	}
 
+	public function createComent($data)
+	{
+		$sql = 'INSERT INTO comentarios(comentario,usuario) VALUES (:comentario)';	
+	}
 }
