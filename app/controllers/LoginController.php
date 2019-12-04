@@ -1,28 +1,28 @@
-<?php
+<?php  
 /**
- * 
+ * Controlador Login
  */
 class LoginController extends Controller
 {
+	
 	private $model;
-	public function __construct ()
+
+	public function __construct() 
 	{
 		$this->model = $this->model('Login');
 	}
+
 	public function index()
 	{
 		$dataForm = [];
-
 		if (isset($_COOKIE['shoplogin'])) {
 			$value = explode('|', $_COOKIE['shoplogin']);
-
 			$dataForm = [
 				'user' => $value[0],
 				'password' => $value[1],
 				'remember' => 'on'
 			];
 		} 
-
 		$data = [
 			'title'	=> 'Login',
 			'menu'	=> false,
@@ -30,11 +30,15 @@ class LoginController extends Controller
 		];
 		$this->view('login', $data);
 	}
+
 	public function olvido()
 	{
+
 		$errors = [];
+
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-			$email = isset($_POST['email']) ? $_POST['email'] : '';
+
+			$email = $_POST['email'] ?? '';
 			if ($email == '') {
 				array_push($errors, 'El correo electrónico es requerido');
 			}
@@ -81,112 +85,120 @@ class LoginController extends Controller
 		];
 		$this->view('olvido', $data);
 	}
+
 	public function registro()
 	{
 		$errors = [];
 		$dataForm = [];
-		if ($_SERVER['REQUEST_METHOD'] == 'POST') {			
+		
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
 			$first_name = $_POST['first_name'] ?? '';
-			$last_name_1 = isset($_POST['last_name_1']) ? $_POST['last_name_1'] : '';
-			$last_name_2 = isset($_POST['last_name_2']) ? $_POST['last_name_2'] : '';
-			$email = isset($_POST['email']) ? $_POST['email'] : '';
-			$password1 = isset($_POST['password1']) ? $_POST['password1'] : '';
-			$password2 = isset($_POST['password2']) ? $_POST['password2'] : '';
-			$address = isset($_POST['address']) ? $_POST['address'] : '';
-			$city = isset($_POST['city']) ? $_POST['city'] : '';
-			$state = isset($_POST['state']) ? $_POST['state'] : '';
-			$postcode = isset($_POST['postcode']) ? $_POST['postcode'] : '';
-			$country = isset($_POST['country']) ? $_POST['country'] : '';
+			$last_name_1 = $_POST['last_name_1'] ?? '';
+			$last_name_2 = $_POST['last_name_2'] ?? '';
+			$email = $_POST['email'] ?? '';
+			$password1 = $_POST['password1'] ?? '';
+			$password2 = $_POST['password2'] ?? '';
+			$address = $_POST['address'] ?? '';
+			$city = $_POST['city'] ?? '';
+			$state = $_POST['state'] ?? '';
+			$postcode = $_POST['postcode'] ?? '';
+			$country = $_POST['country'] ?? '';
+
 			$dataForm = [
-				'first_name'	=> $first_name,
-				'last_name_1'	=> $last_name_1,
-				'last_name_2'	=> $last_name_2,
-				'email'			=> $email,
-				'password'		=> $password1,
-				'address'		=> $address,
-				'city'			=> $city,
-				'state'			=> $state,
-				'postcode'		=> $postcode,
-				'country'		=> $country
+					'first_name'	=> $first_name,
+					'last_name_1'	=> $last_name_1,
+					'last_name_2'	=> $last_name_2,
+					'password'		=> $password1,
+					'email'			=> $email,
+					'address'		=> $address,
+					'city'			=> $city,
+					'state'			=> $state,
+					'postcode'		=> $postcode,
+					'country'		=> $country
 			];
+
 			if ($first_name == '') {
-				array_push($errors, 'El nombre es requerido');
-			}
+				$errors['first_name'] = 'El nombre es requerido';
+			} 
 			if ($last_name_1 == '') {
-				array_push($errors, 'El primer apellido es requerido');
+				$errors['last_name_1'] = 'El primer apellido es requerido';
 			}
 			if ($email == '') {
-				array_push($errors, 'El correo electrónico es requerido');
+				$errors['email'] = 'El correo electrónico es requerido';
 			}
 			if ($password1 == '') {
-				array_push($errors, 'La contraseña es requerida');
+				$errors['password1'] = 'La contraseña es requerida';
 			}
 			if ($password2 == '') {
-				array_push($errors, 'Debe repetir la contraseña');
+				$errors['password2'] = 'Debe repetir la contraseña';
 			}
 			if ($address == '') {
-				array_push($errors, 'La dirección es requerida');
+				$errors['address'] = 'La dirección es requerida';
 			}
 			if ($city == '') {
-				array_push($errors, 'La ciudad es requerida');
+				$errors['city'] = 'La ciudad es requerida';
 			}
 			if ($state == '') {
-				array_push($errors, 'La provincia es requerida');
+				$errors['state'] = 'La provincia es requerida';
 			}
 			if ($postcode == '') {
-				array_push($errors, 'El código postal es requerido');
+				$errors['postcode'] = 'El código postal es requerido';
 			}
 			if ($country == '') {
-				array_push($errors, 'El país es requerido');
+				$errors['country'] = 'El país es requerido';
 			}
 			if ($password1 != $password2) {
-				array_push($errors, 'Ambas contraseñas deben ser iguales');
+				$errors['password'] = 'Ambas contraseñas deben ser iguales';
 			}
-			if ( ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-				array_push($errors, 'El correo electrónico no es válido');
+			if (($email != '') && (! filter_var($email, FILTER_VALIDATE_EMAIL))) {
+				$errors['email'] = 'El correo electronico no es valido';
 			}
-			if (count($errors) == 0) {				
-				if ($this->model->createUser($dataForm)) {					
+	
+			if (count($errors) == 0) {
+				if ($this->model->createUser($dataForm)) {
 					$data = [
-						'title'	=> 'Bienvenid@',
+						'title' => 'Bienvenid@',
 						'subtitle' => 'Bienvenido a la tienda virtual',
-						'menu'	=> false,
-						'color'	=> 'success',
-						'text'	=> 'Gracias por registrarse con nosotros',
+						'menu' => false,
+						'color' => 'success',
+						'text' => 'Gracias por registrarse con nosotros',
 						'colorButton' => 'success',
-						'textButton'  => 'Inicio',
-						'url'	=> 'menu'
+						'textButton' => 'Inicio', 
+						'url' => 'menu'
 					];
-					$this->view('mensaje',$data);
+					$this->view('mensaje', $data);
+
 				} else {
 					$data = [
-						'title'	=> 'Error en el registro',
+						'title' => 'Error en el registro',
 						'subtitle' => 'Error en el proceso de registro de usuario',
-						'menu'	=> false,
-						'color'	=> 'danger',
-						'text'	=> 'Existió un error en el registro. Posiblemente ya existe ese correo electrónico en nuestra base de datos.',
+						'menu' => false,
+						'color' => 'danger',
+						'text' => 'Existe un error en el registro.
+						Posiblemente ya existe ese correo electrónico en nuestra base de datos',
 						'colorButton' => 'danger',
-						'textButton'  => 'Regresar',
-						'url'	=> 'login'
+						'textButton' => 'Regresar', 
+						'url' => 'login'
 					];
-					$this->view('mensaje',$data);
+					$this->view('mensaje', $data);
 				}
-			}
+			} 
 		}
 		$data = [
-			'title' => 'Registro',
-			'menu'	=> false,
-			'errors' => $errors,
-			'data'	=> $dataForm
-		];
-		$this->view('register', $data);
+				'title' => 'Registro',
+				'menu' => false,
+				'errors' => $errors,
+				'data' => $dataForm
+		];	
 
-		
+		$this->view('register', $data);
 	}
+
 	public function changePassword($id)
 	{
 		$errors = [];
-
+		
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 			$password1 = isset($_POST['password1']) ? $_POST['password1'] : '';
@@ -200,8 +212,7 @@ class LoginController extends Controller
 			if ($password1 != $password2) {
 				array_push($errors, 'Ambas contraseñas deben ser iguales');
 			}
-			if (count($errors) == 0) {			
-
+			if (count($errors) == 0) {
 				if ($this->model->changePassword($id, $password1)) {
 					$data = [
 						'title'	=> 'Modificar contraseña',
@@ -228,28 +239,30 @@ class LoginController extends Controller
 					$this->view('mensaje', $data);
 				}
 			}
-			
 		} 
+
 		$data = [
 			'title'	=> 'Cambio de contraseña',
 			'menu'	=> false,
 			'data'	=> $id,
-			'subtitle' => 'Cambio de contraseña de acceso'
+			'subtitle' => 'Cambio de contraseña de acceso',
+			'errors' => $errors
 		];
 		$this->view('changepassword', $data);
-		
 	}
+	
 	public function verifyUser()
 	{
+		
 		$errors = [];
 		$user = isset($_POST['user']) ? $_POST['user'] : '';
 		$password = isset($_POST['password']) ? $_POST['password'] : '';
 		$remember = isset($_POST['remember']) ? 'on' : 'off';
 		if ($user == '') {
-			array_push($errors, 'El correo electrónico es requerido');
+			$errors['email'] = 'El correo electrónico es requerido';
 		}
 		if ($password == '') {
-			array_push($errors, 'La contraseña es requerida');
+			$errors['password'] = 'La contraseña es requerida';
 		}
 		$dataForm = [
 			'user'	=> $user,
@@ -260,21 +273,16 @@ class LoginController extends Controller
 			$errors = $this->model->verifyUser($user, $password);
 			if (count($errors) == 0) {
 				$value = $user . '|' . $password;
-
 				if ($remember == 'on') {
 					$date = time() + (60*60*24*7);
 				} else {
 					$date = time() -1;
 				}
-
 				setcookie('shoplogin', $value, $date, ROOT);
-
 				$session = new Session();
-
 				$dataUser = $this->model->getUserByEmail($user);
 
 				$session->login($dataUser);
-
 				header('location:' . ROOT . 'shop');
 			} else {
 				$data = [
@@ -296,3 +304,6 @@ class LoginController extends Controller
 		}
 	}
 }
+
+
+?>

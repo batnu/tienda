@@ -60,8 +60,10 @@
 					</li>
 					<li class="nav-item"><a href="<?= ROOT ?>cart/sales" class="nav-link">Ventas</a></li>
 				</ul>
-				<ul>
-					<a href="<?= ROOT . 'admin/logeout' ?>" class="nav nav-link">Salir</a>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="nav-item">
+						<a href="<?= ROOT . 'admin/logout'?>" class="nav-link">Salir</a>
+					</li>
 				</ul>
 			<?php endif ?>
 			<?php //TODO Añadir logeout al administrador  ?>
@@ -74,15 +76,7 @@
 				
 			</div>
 			<div class="col-sm-8">
-				<?php if (isset($data['errors']) && count($data['errors']) > 0 ): ?>
-					<div class="alert alert-danger mt-3">
-						<ul class="list">
-							<?php foreach($data['errors'] as $value): ?>
-								<li class="list-item"><?= $value ?></li>
-							<?php endforeach ?>
-						</ul>
-					</div>
-				<?php endif ?>
+				
 
 
 

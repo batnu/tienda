@@ -12,24 +12,59 @@ class CartController extends Controller
 	}
 	
 	public function index($errors = [])
-	{
-		$session = new Session();
-		if($session->getLogin()){
-			$user_id = $session->getUserId();
-			$cart = $this->model->getCart($user_id);
+    {
+        $session = new Session();
+        if ($session->getLogin()) {
+            $user_id = $session->getUserId();
+            $cart = $this->model->getCart($user_id);
+            $subTotal = $this->calcSub($cart);
+            $discount = $this->calcDisc($cart);
+            $send = $this->calcSend($cart);
+            $total = $subTotal-$discount+$send;
 
-			$data = [
-				'title' =>  'Carrito',
-				'menu' => true,
-				'user_id' => $user_id,
-				'data' => $cart,
-				'errors' => $errors
-			];
-			$this->view('carts/index', $data);
-		} else {
-			header('location:'. ROOT);
-		}
-	}
+            $data = [
+                'title'    => 'Carrito',
+                'menu'    => true,
+                'user_id' => $user_id,
+                'data'    => $cart,
+                'errors' => $errors,
+                'subtotal' => $subTotal,
+                'discount' => $discount,
+                'send' => $send,
+                'total' => $total
+            ];
+            $this->view('carts/index', $data);
+        } else {
+            header('location:' . ROOT);
+        }
+    }
+
+    private function calcSub($data)
+    {
+        $result=0;
+        foreach ($data as $obj) {
+            $result+=$obj->price * $obj->quantity;
+        }
+        return $result;
+    }
+
+    private function calcDisc($data)
+    {
+        $result=0;
+        foreach ($data as $obj) {
+            $result+=$obj->discount;
+        }
+        return $result;
+    }
+
+    private function calcSend($data)
+    {
+        $result=0;
+        foreach ($data as $obj) {
+            $result+=$obj->send;
+        }
+        return $result;
+    }
 
 	public function addProduct($product_id, $user_id)
 	{
