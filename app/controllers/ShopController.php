@@ -49,7 +49,6 @@ class ShopController extends Controller
 			'title' => 'Detalle del producto',
 			'subtitle' => $product->name,
 			'menu' => true,
-			'admin' => false,
 			'data' => $product,
 			'back' => $back,
 			'user_id'  => $session->getUserId()

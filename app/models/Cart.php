@@ -13,16 +13,27 @@ class Cart
 
 	}
 	public function verifyProduct($product_id, $user_id)
-	{
-		$sql = 'SELECT * FROM carts WHERE product_id=:product_id AND user_id=:user_id';
-		$query = $this->db->prepare($sql);
-		$params = [
-			':product_id' => $product_id,
-			':user_id' => $user_id
-		];
-		$query->execute($params);
-		return $query->rowCount();
-	}
+    {
+        $sql = 'SELECT * FROM carts WHERE product_id=:product_id AND user_id=:user_id AND state=0';
+        $query = $this->db->prepare($sql);
+        $params = [
+            ':product_id' => $product_id,
+            ':user_id' => $user_id,
+        ];
+        if ($query->rowCount()==1){
+            return $query->rowCount();
+        } else {
+            $sql = 'UPDATE carts SET quantity=quantity+1 WHERE product_id=:product_id AND user_id=:user_id AND state=0';
+            $query = $this->db->prepare($sql);
+            $params = [
+                ':product_id' => $product_id,
+                ':user_id' => $user_id,
+            ];
+        $query->execute($params);
+        return $query->rowCount();
+        }
+
+    }
 
 	public function addProduct($product_id, $user_id)
 	{

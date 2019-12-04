@@ -66,7 +66,6 @@
 					</li>
 				</ul>
 			<?php endif ?>
-			<?php //TODO Añadir logeout al administrador  ?>
 		</div>
 	</nav>
 	
